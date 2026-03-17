@@ -1,0 +1,1371 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VABEL | Ingeniería Estructural</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+:root{
+  /* Base VABEL */
+  --vabel-navy:#0B1F3B;     /* principal */
+  --vabel-blue:#1E40AF;     /* acento sobrio (menos “neón”) */
+  --vabel-sky:#2563EB;      /* acento secundario para hover/links */
+
+  /* Neutros premium */
+  --vabel-ink:#0F172A;
+  --vabel-muted:#5B6B82;    /* un poco más “corporativo” */
+  --vabel-line:#E6EAF2;
+  --vabel-soft:#F7F9FD;
+}
+
+    body{ font-family: 'Manrope', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .btn-primary{ background: var(--vabel-navy); }
+    .btn-primary:hover{ filter: brightness(0.95); }
+    .btn-outline{ border:1px solid var(--vabel-line); }
+    .title-accent{ color: var(--vabel-navy); }
+    .bar{
+      width: 86px; height: 4px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--vabel-navy), var(--vabel-sky));
+    }
+
+    /* Slider (estructura tipo IC) */
+    .slide{
+      position:absolute; inset:0;
+      background-size: cover;
+      background-position: center;
+      opacity:0;
+      transform: scale(1.02);
+      transition: opacity .7s ease, transform .9s ease;
+    }
+    .slide.active{
+      opacity:1;
+      transform: scale(1.0);
+    }
+    .overlay{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.55);
+    }
+
+    /* Proyectos: hover overlay */
+    .proj{
+      position:relative; overflow:hidden; border-radius:16px;
+      border:1px solid var(--vabel-line);
+      background:#fff;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .proj:hover{ transform: translateY(-3px); box-shadow: 0 18px 38px rgba(15,23,42,.10); }
+    .proj img{ width:100%; height: 220px; object-fit: cover; display:block; }
+    .proj .proj-overlay{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(11,31,59,0) 30%, rgba(11,31,59,.86) 100%);
+      opacity:.0;
+      transition: opacity .25s ease;
+    }
+    .proj:hover .proj-overlay{ opacity:1; }
+    .proj .proj-text{
+      position:absolute; left:16px; right:16px; bottom:14px;
+      opacity:0; transform: translateY(6px);
+      transition: opacity .25s ease, transform .25s ease;
+      color:#fff;
+    }
+    .proj:hover .proj-text{ opacity:1; transform: translateY(0); }
+
+    /* Cards */
+    .card{
+  border:1px solid var(--vabel-line);
+  border-radius:16px;
+  background:#fff;
+  box-shadow: 0 8px 24px rgba(15,23,42,.05);
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      box-shadow: 0 18px 38px rgba(15,23,42,.10);
+      border-color: rgba(29,78,216,.25);
+    }
+
+    /* Mini “ticker” (banda tipo carrusel de frases) */
+    .ticker{
+      overflow:hidden;
+      background: var(--vabel-navy);
+      color: rgba(255,255,255,.92);
+      border-top: 1px solid rgba(255,255,255,.10);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .ticker-track{
+      display:flex;
+      gap: 42px;
+      padding: 18px 0;
+      white-space: nowrap;
+      animation: marquee 18s linear infinite;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ===== Header premium ===== */
+.nav-premium a{
+  position: relative;
+  padding: 10px 4px;
+  font-weight: 800;
+  color: rgba(15,23,42,.78);
+  letter-spacing: .2px;
+}
+.nav-premium a:hover{
+  color: rgba(15,23,42,1);
+}
+.nav-premium a::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom: 4px;
+  height: 2px;
+  width: 0%;
+  background: var(--vabel-sky);
+  border-radius: 999px;
+  transition: width .22s ease;
+}
+.nav-premium a:hover::after{ width: 100%; }
+
+.nav-premium a.active{
+  color: var(--vabel-navy);
+}
+.nav-premium a.active::after{ width: 100%; background: var(--vabel-blue); }
+
+/* CTA más sobrio */
+.header-cta{
+  background: var(--vabel-navy);
+}
+.header-cta:hover{
+  filter: brightness(.96);
+}
+
+/* ===== Single-page "pages" with transitions ===== */
+.page{
+  display:none;
+  opacity:0;
+  transform: translateY(10px);
+  transition: opacity .35s ease, transform .35s ease;
+}
+.page.active{
+  display:block;
+  opacity:1;
+  transform: translateY(0);
+}
+
+/* Opcional: evita que el usuario “se pierda” con scroll largo */
+body.page-mode{
+  overflow-x:hidden;
+}
+
+/* ===== Services slider ===== */
+.service-hero{
+  min-height: 340px;
+  background: #0B1F3B;
+}
+
+.service-slide{
+  position:absolute;
+  inset:0;
+  background-size: cover;
+  background-position: center;
+  opacity:0;
+  transform: scale(1.02);
+  transition: opacity .7s ease, transform .9s ease;
+}
+.service-slide.active{
+  opacity:1;
+  transform: scale(1);
+}
+
+.service-dot{
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.45);
+  border: 1px solid rgba(255,255,255,.35);
+  transition: all .2s ease;
+}
+.service-dot.active{
+  background: white;
+  transform: scale(1.08);
+}
+
+
+  </style>
+</head>
+
+<body class="bg-white text-slate-900">
+
+  <!-- HEADER (estructura tipo IC: logo izq, menú, icono whatsapp) -->
+  <header class="sticky top-0 z-50 bg-white/92 backdrop-blur border-b" style="border-color: var(--vabel-line);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="h-32 flex items-center justify-between gap-4">
+
+<!-- Marca (solo logo) -->
+      <a href="#inicio" onclick="go('inicio'); return false;" class="flex items-center shrink-0">
+        <img src="Estructura-1.png" alt="VABEL" class="h-32 sm:h-44 w-auto object-contain">
+      </a>
+
+      <!-- Menú desktop -->
+      <nav class="nav-premium hidden lg:flex items-center gap-8">
+        <a href="#inicio" onclick="go('inicio'); return false;" class="active">Inicio</a>
+        <a href="#nosotros" onclick="go('nosotros'); return false;">Nosotros</a>
+        <a href="#servicios" onclick="go('servicios'); return false;">Servicios</a>
+        <a href="#proyectos" onclick="go('proyectos'); return false;">Proyectos</a>
+        <a href="#contacto" onclick="go('contacto'); return false;">Contacto</a>
+      </nav>
+
+      <!-- Acciones desktop -->
+      <div class="hidden lg:flex items-center gap-3">
+        <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+           class="h-11 w-11 rounded-xl flex items-center justify-center border hover:bg-slate-50"
+           style="border-color: var(--vabel-line);" aria-label="WhatsApp">
+          <i class="fa-brands fa-whatsapp text-xl" style="color:#16a34a;"></i>
+        </a>
+
+        <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+           class="header-cta px-4 py-2.5 rounded-xl text-white font-extrabold">
+          Cotizar
+        </a>
+      </div>
+
+      <!-- Mobile toggle -->
+      <button id="btnMenu"
+              class="lg:hidden h-11 w-11 rounded-xl border flex items-center justify-center hover:bg-slate-50"
+              style="border-color: var(--vabel-line);">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="lg:hidden hidden pb-4">
+      <div class="flex flex-col gap-2 font-bold">
+        <a class="px-3 py-2 rounded-xl hover:bg-slate-50" href="#inicio" onclick="go('inicio'); return false;">Inicio</a>
+        <a class="px-3 py-2 rounded-xl hover:bg-slate-50" href="#nosotros" onclick="go('nosotros'); return false;">Nosotros</a>
+        <a class="px-3 py-2 rounded-xl hover:bg-slate-50" href="#servicios" onclick="go('servicios'); return false;">Servicios</a>
+        <a class="px-3 py-2 rounded-xl hover:bg-slate-50" href="#proyectos" onclick="go('proyectos'); return false;">Proyectos</a>
+        <a class="px-3 py-2 rounded-xl hover:bg-slate-50" href="#contacto" onclick="go('contacto'); return false;">Contacto</a>
+
+        <div class="grid grid-cols-2 gap-2 pt-2">
+          <a class="px-4 py-3 rounded-xl border text-center hover:bg-slate-50"
+             style="border-color: var(--vabel-line);"
+             href="mailto:vabelproyectos@gmail.com">
+            <i class="fa-regular fa-envelope mr-2"></i>Correo
+          </a>
+          <a class="px-4 py-3 rounded-xl text-white text-center btn-primary"
+             href="https://wa.me/526673214538" target="_blank" rel="noopener">
+            <i class="fa-brands fa-whatsapp mr-2" style="color:#a7f3d0;"></i>WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+  <main id="pages">
+    <section id="page-inicio" class="page active">
+
+      <!-- HERO SLIDER refinado -->
+  <section id="inicio" class="relative min-h-[720px] overflow-hidden">
+    <div class="absolute inset-0">
+      <div id="slide1" class="slide active" style="background-image:url('https://images.unsplash.com/photo-1512403754473-27835f7b9984?q=80&w=2200&auto=format&fit=crop');"></div>
+      <div id="slide2" class="slide" style="background-image:url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2200&auto=format&fit=crop');"></div>
+      <div class="absolute inset-0"
+           style="background:
+             linear-gradient(100deg, rgba(6,18,38,.92) 0%, rgba(11,31,59,.82) 50%, rgba(11,31,59,.40) 100%);">
+      </div>
+      <div class="absolute inset-0 opacity-[0.10]"
+           style="background-image:
+             linear-gradient(rgba(255,255,255,.16) 1px, transparent 1px),
+             linear-gradient(90deg, rgba(255,255,255,.16) 1px, transparent 1px);
+             background-size: 34px 34px;">
+      </div>
+    </div>
+
+    <div class="relative z-10 min-h-[720px] flex items-center">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="max-w-5xl text-white">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border text-xs tracking-[0.22em] uppercase font-extrabold text-white/80"
+               style="border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.08); backdrop-filter: blur(8px);">
+            <span class="inline-block w-2 h-2 rounded-full bg-cyan-300"></span>
+            VABEL Ingeniería Estructural
+          </div>
+
+          <h1 class="mt-6 text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-[0.98] text-white max-w-4xl">
+            Ingeniería estructural
+            <span class="block" style="color:#DCE9FF;">con criterio, claridad y precisión</span>
+          </h1>
+
+          <p class="mt-6 text-lg sm:text-xl text-white/82 leading-8 max-w-3xl">
+            Diseño estructural, consultoría y revisión técnica para proyectos residenciales, comerciales e industriales, con un enfoque profesional orientado a soluciones seguras, funcionales y bien fundamentadas.
+          </p>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a href="#servicios" onclick="go('servicios'); return false;"
+               class="px-6 py-3.5 rounded-xl font-extrabold text-white inline-flex items-center justify-center"
+               style="background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.20);">
+              Ver servicios <i class="fa-solid fa-arrow-right ml-2"></i>
+            </a>
+
+            <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+               class="px-6 py-3.5 rounded-xl font-extrabold text-white inline-flex items-center justify-center"
+               style="background: linear-gradient(135deg, #1aa0d8, #0b6ea3); box-shadow: 0 18px 45px rgba(7,28,55,.30);">
+              <i class="fa-brands fa-whatsapp mr-2" style="color:#a7f3d0;"></i> Cotizar por WhatsApp
+            </a>
+          </div>
+
+          <div class="mt-10 flex flex-wrap gap-3">
+            <span class="px-4 py-2 rounded-full text-sm font-bold"
+                  style="background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);">
+              Diseño estructural
+            </span>
+            <span class="px-4 py-2 rounded-full text-sm font-bold"
+                  style="background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);">
+              Consultoría
+            </span>
+            <span class="px-4 py-2 rounded-full text-sm font-bold"
+                  style="background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);">
+              Dictámenes
+            </span>
+            <span class="px-4 py-2 rounded-full text-sm font-bold"
+                  style="background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);">
+              Proyectos en todo México
+            </span>
+          </div>
+
+          <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/78 font-semibold">
+            <span class="inline-flex items-center gap-2">
+              <i class="fa-solid fa-check text-cyan-300"></i>
+              Soluciones seguras y funcionales
+            </span>
+            <span class="inline-flex items-center gap-2">
+              <i class="fa-solid fa-check text-cyan-300"></i>
+              Atención profesional y directa
+            </span>
+            <span class="inline-flex items-center gap-2">
+              <i class="fa-solid fa-check text-cyan-300"></i>
+              Base en Culiacán, cobertura nacional
+            </span>
+          </div>
+
+          <!-- Slider controls -->
+          <div class="mt-10 flex gap-2">
+            <button class="h-10 w-10 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15"
+                    onclick="prevSlide()" aria-label="Anterior">
+              <i class="fa-solid fa-arrow-left text-white"></i>
+            </button>
+            <button class="h-10 w-10 rounded-xl bg-white/10 border border-white/20 hover:bg-white/15"
+                    onclick="nextSlide()" aria-label="Siguiente">
+              <i class="fa-solid fa-arrow-right text-white"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- “TICKER” tipo banda/carrusel de palabras -->
+  <section class="ticker">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- duplicamos el contenido para loop visual -->
+      <div class="ticker-track">
+        <div class="flex gap-10">
+          <span class="font-extrabold">* Análisis estructural</span>
+          <span class="font-extrabold">* Diseño estructural</span>
+          <span class="font-extrabold">* Dictámenes</span>
+          <span class="font-extrabold">* Consultoría</span>
+          <span class="font-extrabold">* DRO</span>
+          <span class="font-extrabold">* Valuación</span>
+        </div>
+        <div class="flex gap-10">
+          <span class="font-extrabold">* Análisis estructural</span>
+          <span class="font-extrabold">* Diseño estructural</span>
+          <span class="font-extrabold">* Dictámenes</span>
+          <span class="font-extrabold">* Consultoría</span>
+          <span class="font-extrabold">* DRO</span>
+          <span class="font-extrabold">* Valuación</span>
+        </div>
+      </div>
+    </div>
+  </section>
+    </section>
+
+    <section id="page-nosotros" class="page">
+
+  <!-- Banner superior Nosotros -->
+  <section class="relative h-[240px] sm:h-[280px] overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center"
+         style="background-image:url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2000&auto=format&fit=crop');">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(11,31,59,.70), rgba(11,31,59,.55));"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+      <div class="max-w-2xl text-white">
+        <div class="text-xs tracking-[0.25em] uppercase font-extrabold text-white/75">Nosotros</div>
+        <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold leading-tight">
+          Ingeniería con criterio, <br> claridad y precisión
+        </h1>
+        <p class="mt-4 text-base sm:text-lg text-white/85 max-w-xl">
+          En VABEL desarrollamos soluciones estructurales con visión técnica y enfoque práctico para proyectos en todo México.
+        </p>
+      </div>
+    </div>
+  </section>
+
+    <section id="nosotros" class="py-20" style="background: var(--vabel-soft);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="grid grid-cols-1 lg:grid-cols-[1.08fr_0.92fr] gap-10 items-stretch">
+
+        <!-- Imagen principal con mejor presencia -->
+        <div class="card overflow-hidden">
+          <div class="relative h-full min-h-[520px]">
+            <img class="absolute inset-0 w-full h-full object-cover"
+                 src="https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=1800&auto=format&fit=crop"
+                 alt="Ingeniería estructural en obra">
+
+            <div class="absolute inset-0"
+                 style="background: linear-gradient(180deg, rgba(11,31,59,.18) 0%, rgba(11,31,59,.62) 100%);"></div>
+
+            <div class="absolute left-0 right-0 bottom-0 p-6 sm:p-8 text-white">
+              <div class="text-xs tracking-[0.22em] uppercase font-extrabold text-white/75">
+                VABEL
+              </div>
+              <div class="mt-2 text-2xl sm:text-3xl font-extrabold leading-tight max-w-xl">
+                Soluciones estructurales con visión técnica y enfoque ejecutable
+              </div>
+              <p class="mt-3 text-white/85 leading-7 max-w-2xl">
+                Diseño, revisión y acompañamiento profesional para proyectos que requieren criterio, claridad y seguridad.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Texto -->
+        <div class="flex flex-col justify-center">
+          <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+            Quiénes somos
+          </div>
+
+          <h2 class="mt-2 text-3xl sm:text-4xl lg:text-[44px] font-extrabold title-accent leading-tight">
+            Enfoque profesional en ingeniería estructural
+          </h2>
+
+          <div class="bar mt-4"></div>
+
+          <p class="mt-6 text-slate-700 text-lg leading-8">
+            VABEL es una firma de ingeniería estructural orientada a desarrollar soluciones seguras, claras y técnicamente bien fundamentadas para proyectos residenciales, comerciales e industriales.
+          </p>
+
+          <p class="mt-5 text-slate-700 leading-8">
+            Nuestro trabajo busca equilibrar criterio ingenieril, viabilidad constructiva y comunicación profesional, para acompañar al cliente con claridad desde la definición del problema hasta la entrega técnica.
+          </p>
+
+          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="text-xs uppercase tracking-widest font-extrabold" style="color: var(--vabel-muted);">Especialidad</div>
+              <div class="mt-2 text-lg font-extrabold title-accent">Diseño y revisión estructural</div>
+            </div>
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="text-xs uppercase tracking-widest font-extrabold" style="color: var(--vabel-muted);">Cobertura</div>
+              <div class="mt-2 text-lg font-extrabold title-accent">Proyectos en todo México</div>
+            </div>
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="text-xs uppercase tracking-widest font-extrabold" style="color: var(--vabel-muted);">Enfoque</div>
+              <div class="mt-2 text-lg font-extrabold title-accent">Claridad técnica y ejecutabilidad</div>
+            </div>
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="text-xs uppercase tracking-widest font-extrabold" style="color: var(--vabel-muted);">Servicios</div>
+              <div class="mt-2 text-lg font-extrabold title-accent">Consultoría, dictámenes y DRO</div>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <div class="font-extrabold text-slate-900">Nuestro enfoque de proyectos incluye:</div>
+            <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-700">
+              <div class="flex items-start gap-3">
+                <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                <span>Análisis y diseño estructural</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                <span>Consultoría técnica</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                <span>Dictámenes y peritajes</span>
+              </div>
+              <div class="flex items-start gap-3">
+                <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                <span>Director Responsable de Obra (DRO)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+    <!-- Fortalezas VABEL -->
+  <section class="py-20 bg-white border-t" style="border-color: var(--vabel-line);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mb-12">
+        <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+          Fortalezas
+        </div>
+        <h2 class="mt-2 text-3xl sm:text-4xl lg:text-[44px] font-extrabold title-accent leading-tight">
+          Lo que distingue nuestro trabajo
+        </h2>
+        <div class="bar mt-4"></div>
+        <p class="mt-5 text-slate-700 text-lg leading-8">
+          Una forma de trabajo orientada a la claridad técnica, la viabilidad constructiva y la atención profesional.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-7">
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-ruler-combined text-2xl"></i>
+          </div>
+          <h3 class="mt-3 text-2xl font-extrabold leading-snug title-accent">Precisión técnica</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Diseños y revisiones estructurales desarrollados con criterio ingenieril, claridad documental y enfoque profesional.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-comments text-2xl"></i>
+          </div>
+          <h3 class="mt-3 text-2xl font-extrabold leading-snug title-accent">Comunicación profesional</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Explicaciones claras para clientes, arquitectos, constructores y tomadores de decisión durante cada etapa del proyecto.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-helmet-safety text-2xl"></i>
+          </div>
+          <h3 class="mt-3 text-2xl font-extrabold leading-snug title-accent">Soluciones ejecutables</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Propuestas estructurales pensadas para construirse correctamente, no solo para resolver en papel.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-globe text-2xl"></i>
+          </div>
+          <h3 class="mt-3 text-2xl font-extrabold leading-snug title-accent">Cobertura nacional</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Base en Culiacán, Sinaloa, con atención profesional a proyectos estructurales en distintas regiones de México.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+    </section>
+      <section id="page-servicios" class="page">
+
+
+  <!-- SERVICIOS (estructura tipo IC: título izq + botón der + cards) -->
+  <section id="servicios" class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+<div class="flex flex-col gap-8">
+  <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+    <div class="max-w-3xl">
+      <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+        Servicios
+      </div>
+      <h2 class="mt-2 text-3xl sm:text-4xl lg:text-[46px] font-extrabold title-accent leading-tight">
+        Diseño estructural y servicios profesionales
+      </h2>
+      <div class="bar mt-4"></div>
+      <p class="mt-5 text-slate-700 text-lg leading-8 max-w-2xl">
+        Servicios para proyectos nuevos y existentes, con entregables claros,
+        asesoría técnica y acompañamiento profesional en cada etapa.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="#contacto" onclick="go('contacto'); return false;"
+         class="px-5 py-3 rounded-xl font-extrabold text-white btn-primary inline-flex items-center justify-center">
+        Solicitar propuesta <i class="fa-solid fa-arrow-right ml-2"></i>
+      </a>
+
+      <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+         class="px-5 py-3 rounded-xl font-bold border inline-flex items-center justify-center hover:bg-slate-50"
+         style="border-color: var(--vabel-line); color: var(--vabel-navy);">
+        <i class="fa-brands fa-whatsapp mr-2" style="color:#16a34a;"></i> WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="service-hero relative overflow-hidden rounded-2xl border" style="border-color: var(--vabel-line);">
+  <!-- Slides -->
+  <div class="service-slide active" style="background-image:url('https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=2000&auto=format&fit=crop');"></div>
+  <div class="service-slide" style="background-image:url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2000&auto=format&fit=crop');"></div>
+  <div class="service-slide" style="background-image:url('https://images.unsplash.com/photo-1485083269755-a7b559a4fe5e?q=80&w=2000&auto=format&fit=crop');"></div>
+
+  <!-- Overlay -->
+  <div class="absolute inset-0" style="background: linear-gradient(90deg, rgba(11,31,59,.84) 0%, rgba(11,31,59,.58) 45%, rgba(11,31,59,.28) 100%);"></div>
+
+  <!-- Content -->
+  <div class="relative z-10 px-8 sm:px-10 lg:px-12 py-10 sm:py-12 lg:py-14 text-white">
+    <div class="max-w-2xl">
+      <div class="text-xs tracking-[0.25em] uppercase font-extrabold text-white/75">
+        Servicios VABEL
+      </div>
+      <h3 class="mt-3 text-3xl sm:text-4xl font-extrabold leading-tight">
+        Soluciones estructurales
+        <span class="block text-white/90">con criterio técnico y enfoque ejecutable</span>
+      </h3>
+      <p class="mt-4 text-base sm:text-lg text-white/85 leading-8 max-w-xl">
+        Diseño, revisión, peritajes, valuación y acompañamiento técnico para proyectos en distintas etapas.
+      </p>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <span class="px-4 py-2 rounded-full text-sm font-semibold border border-white/20 bg-white/10">Diseño estructural</span>
+        <span class="px-4 py-2 rounded-full text-sm font-semibold border border-white/20 bg-white/10">Consultoría</span>
+        <span class="px-4 py-2 rounded-full text-sm font-semibold border border-white/20 bg-white/10">Peritajes</span>
+        <span class="px-4 py-2 rounded-full text-sm font-semibold border border-white/20 bg-white/10">Valuación</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dots -->
+  <div class="absolute bottom-5 right-6 z-20 flex gap-2">
+    <button class="service-dot active" onclick="showServiceSlide(0)"></button>
+    <button class="service-dot" onclick="showServiceSlide(1)"></button>
+    <button class="service-dot" onclick="showServiceSlide(2)"></button>
+  </div>
+</div>
+
+      <div class="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-diagram-project text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Análisis y diseño estructural</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Concreto, acero y soluciones eficientes y constructibles.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-magnifying-glass-chart text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Consultoría y revisión estructural</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Revisión independiente, soporte técnico y toma de decisiones.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-file-signature text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Peritajes y dictámenes</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Diagnóstico, evaluación y reportes formales.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-helmet-safety text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Director Responsable de Obra (DRO)</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Seguimiento y responsabilidad técnica en obra.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-scale-balanced text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Valuación de inmuebles</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Valuación con documentación clara y profesional.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-building-shield text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Diagnóstico estructural</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Evaluación técnica de estructuras existentes para identificar daños, riesgos y necesidades de intervención.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-scroll text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Memorias y documentación técnica</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Desarrollo de memorias, criterios y documentación estructural con presentación clara y ordenada.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <i class="fa-solid fa-helmet-safety text-2xl"></i>
+          </div>
+          <h3 class="mt-6 text-2xl font-extrabold leading-snug title-accent">Acompañamiento técnico en proyecto</h3>
+          <p class="mt-4 text-[15px] leading-8 text-slate-600">
+            Seguimiento y asesoría técnica para apoyar decisiones durante distintas etapas del proyecto.
+          </p>
+        </div>
+
+        <div class="card p-8 min-h-[320px] flex flex-col text-white"
+     style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+          <div class="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+               style="background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.16);">
+            <i class="fa-solid fa-circle-check text-2xl"></i>
+          </div>
+
+          <div class="mt-6 text-xs uppercase tracking-widest font-extrabold text-white/70">
+            Valor agregado
+          </div>
+
+          <h3 class="mt-3 text-2xl font-extrabold leading-snug">Entregables claros</h3>
+
+          <p class="mt-4 text-[15px] leading-8 text-white/82">
+            Además del soporte técnico, buscamos que cada entrega tenga orden, claridad y utilidad práctica para el proyecto.
+          </p>
+
+          <ul class="mt-5 text-[15px] leading-8 text-white/88 space-y-1">
+            <li><i class="fa-solid fa-check mr-2 text-cyan-200"></i> Planos estructurales detallados</li>
+            <li><i class="fa-solid fa-check mr-2 text-cyan-200"></i> Memoria de cálculo</li>
+            <li><i class="fa-solid fa-check mr-2 text-cyan-200"></i> Asesoría técnica</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+    </section>
+
+    <section id="page-proyectos" class="page">
+
+
+  <!-- PROYECTOS (estructura tipo IC: título izq + botón der + grid con hover overlay) -->
+  <section id="proyectos" class="pb-16" style="background: var(--vabel-soft);">
+
+    <!-- Banner superior -->
+    <div class="relative h-[260px] sm:h-[320px] overflow-hidden">
+      <div class="absolute inset-0 bg-cover bg-center"
+           style="background-image:url('https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=2000&auto=format&fit=crop');">
+      </div>
+      <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(11,31,59,.78), rgba(11,31,59,.62));"></div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+        <div class="max-w-2xl text-white">
+          <div class="text-xs tracking-[0.25em] uppercase font-extrabold text-white/75">
+            Proyectos
+          </div>
+          <h2 class="mt-3 text-4xl sm:text-5xl font-extrabold leading-tight">
+            Portafolio de Proyectos
+          </h2>
+          <p class="mt-4 text-base sm:text-lg text-white/85 leading-8 max-w-xl">
+            Soluciones estructurales desarrolladas con criterio técnico, claridad y enfoque ejecutable.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+        <div class="max-w-3xl">
+          <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+            Nuestros proyectos
+          </div>
+          <h3 class="mt-2 text-3xl sm:text-4xl font-extrabold title-accent leading-tight">
+            Proyectos estructurales en distintas tipologías
+          </h3>
+          <div class="bar mt-4"></div>
+          <p class="mt-5 text-slate-700 text-lg leading-8 max-w-2xl">
+            Una muestra de proyectos y alcances representativos en diseño, revisión y evaluación estructural.
+          </p>
+        </div>
+
+        <a href="#contacto" onclick="go('contacto'); return false;"
+           class="px-5 py-3 rounded-xl font-extrabold text-white btn-primary inline-flex items-center">
+          Ver todos <i class="fa-solid fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+
+      <!-- Galería -->
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div class="card overflow-hidden">
+          <img class="w-full h-[260px] object-cover"
+               src="https://images.unsplash.com/photo-1460317442991-0ec209397118?q=80&w=1600&auto=format&fit=crop"
+               alt="Nave industrial">
+          <div class="p-5">
+            <div class="text-xl font-extrabold title-accent">Nave industrial</div>
+            <div class="mt-1 text-sm uppercase tracking-wide font-bold" style="color: var(--vabel-muted);">
+              Nayarit · Diseño estructural
+            </div>
+            <p class="mt-3 text-[15px] leading-7 text-slate-600">
+              Desarrollo de propuesta estructural para nave de uso industrial con enfoque en seguridad y constructibilidad.
+            </p>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <img class="w-full h-[260px] object-cover"
+               src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1600&auto=format&fit=crop"
+               alt="Edificio de concreto">
+          <div class="p-5">
+            <div class="text-xl font-extrabold title-accent">Edificio de concreto</div>
+            <div class="mt-1 text-sm uppercase tracking-wide font-bold" style="color: var(--vabel-muted);">
+              Culiacán · Edificación
+            </div>
+            <p class="mt-3 text-[15px] leading-7 text-slate-600">
+              Solución estructural para edificio de varios niveles con criterios de desempeño y documentación clara.
+            </p>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <img class="w-full h-[260px] object-cover"
+               src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1600&auto=format&fit=crop"
+               alt="Proyecto comercial">
+          <div class="p-5">
+            <div class="text-xl font-extrabold title-accent">Proyecto comercial</div>
+            <div class="mt-1 text-sm uppercase tracking-wide font-bold" style="color: var(--vabel-muted);">
+              México · Revisión estructural
+            </div>
+            <p class="mt-3 text-[15px] leading-7 text-slate-600">
+              Revisión técnica y criterios de ajuste estructural para proyecto comercial en etapa de desarrollo.
+            </p>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <img class="w-full h-[260px] object-cover"
+               src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1600&auto=format&fit=crop"
+               alt="Dictamen estructural">
+          <div class="p-5">
+            <div class="text-xl font-extrabold title-accent">Dictamen estructural</div>
+            <div class="mt-1 text-sm uppercase tracking-wide font-bold" style="color: var(--vabel-muted);">
+              Inmueble existente · Evaluación
+            </div>
+            <p class="mt-3 text-[15px] leading-7 text-slate-600">
+              Evaluación de condición estructural y elaboración de dictamen técnico para toma de decisiones.
+            </p>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <img class="w-full h-[260px] object-cover"
+               src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=1600&auto=format&fit=crop"
+               alt="Rehabilitación estructural">
+          <div class="p-5">
+            <div class="text-xl font-extrabold title-accent">Rehabilitación estructural</div>
+            <div class="mt-1 text-sm uppercase tracking-wide font-bold" style="color: var(--vabel-muted);">
+              Proyecto existente · Intervención
+            </div>
+            <p class="mt-3 text-[15px] leading-7 text-slate-600">
+              Recomendaciones técnicas y criterios de intervención para mejorar seguridad y desempeño estructural.
+            </p>
+          </div>
+        </div>
+
+        <div class="card overflow-hidden">
+          <img class="w-full h-[260px] object-cover"
+               src="https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?q=80&w=1600&auto=format&fit=crop"
+               alt="Supervisión técnica">
+          <div class="p-5">
+            <div class="text-xl font-extrabold title-accent">Supervisión técnica</div>
+            <div class="mt-1 text-sm uppercase tracking-wide font-bold" style="color: var(--vabel-muted);">
+              Obra · Acompañamiento profesional
+            </div>
+            <p class="mt-3 text-[15px] leading-7 text-slate-600">
+              Soporte técnico y acompañamiento para seguimiento estructural durante distintas etapas de obra.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+    </section>
+        <section id="page-contacto" class="page">
+
+  <!-- Banner superior Contacto -->
+  <section class="relative h-[250px] sm:h-[300px] overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center"
+         style="background-image:url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=2000&auto=format&fit=crop');">
+    </div>
+    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(11,31,59,.78), rgba(11,31,59,.60));"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+      <div class="max-w-2xl text-white">
+        <div class="text-xs tracking-[0.25em] uppercase font-extrabold text-white/75">Contacto</div>
+        <h2 class="mt-3 text-4xl sm:text-5xl font-extrabold leading-tight">
+          Hablemos de tu proyecto
+        </h2>
+        <p class="mt-4 text-base sm:text-lg text-white/85 leading-8 max-w-xl">
+          Estamos listos para apoyarte con diseño estructural, consultoría, revisión técnica y servicios especializados.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección principal de contacto -->
+  <section id="contacto" class="py-16" style="background: var(--vabel-soft);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+        <div class="max-w-3xl">
+          <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+            Contáctanos
+          </div>
+          <h3 class="mt-2 text-3xl sm:text-4xl font-extrabold title-accent leading-tight">
+            Atención profesional para proyectos en todo México
+          </h3>
+          <div class="bar mt-4"></div>
+          <p class="mt-5 text-slate-700 text-lg leading-8 max-w-2xl">
+            Cuéntanos brevemente tu proyecto y con gusto te orientamos sobre el alcance, los entregables y la mejor forma de apoyarte.
+          </p>
+        </div>
+
+        <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+           class="px-5 py-3 rounded-xl font-extrabold text-white btn-primary inline-flex items-center">
+          Escribir por WhatsApp <i class="fa-solid fa-arrow-right ml-2"></i>
+        </a>
+      </div>
+
+      <div class="mt-12 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8">
+
+        <!-- Columna izquierda -->
+        <div class="card p-8 sm:p-10">
+          <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+            Información de contacto
+          </div>
+          <h4 class="mt-2 text-2xl sm:text-3xl font-extrabold title-accent">
+            Ponte en contacto con VABEL
+          </h4>
+          <p class="mt-4 text-slate-700 leading-8">
+            Atendemos proyectos de ingeniería estructural, consultoría, revisión, dictámenes y acompañamiento técnico.
+          </p>
+
+          <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="h-12 w-12 rounded-xl border flex items-center justify-center"
+                   style="border-color: var(--vabel-line);">
+                <i class="fa-brands fa-whatsapp text-xl" style="color:#16a34a;"></i>
+              </div>
+              <div class="mt-4 text-lg font-extrabold title-accent">WhatsApp</div>
+              <p class="mt-2 text-sm leading-7 text-slate-600">
+                Atención directa para cotización y seguimiento inicial.
+              </p>
+              <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+                 class="mt-4 inline-flex items-center font-bold"
+                 style="color: var(--vabel-sky);">
+                +52 667 321 4538 <i class="fa-solid fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="h-12 w-12 rounded-xl border flex items-center justify-center"
+                   style="border-color: var(--vabel-line);">
+                <i class="fa-regular fa-envelope text-xl" style="color: var(--vabel-sky);"></i>
+              </div>
+              <div class="mt-4 text-lg font-extrabold title-accent">Correo electrónico</div>
+              <p class="mt-2 text-sm leading-7 text-slate-600">
+                Envíanos información de tu proyecto o requerimientos técnicos.
+              </p>
+              <a href="mailto:vabelproyectos@gmail.com"
+                 class="mt-4 inline-flex items-center font-bold break-all"
+                 style="color: var(--vabel-sky);">
+                vabelproyectos@gmail.com
+              </a>
+            </div>
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="h-12 w-12 rounded-xl border flex items-center justify-center"
+                   style="border-color: var(--vabel-line);">
+                <i class="fa-solid fa-location-dot text-xl" style="color: var(--vabel-sky);"></i>
+              </div>
+              <div class="mt-4 text-lg font-extrabold title-accent">Ubicación</div>
+              <p class="mt-2 text-sm leading-7 text-slate-600">
+                Base en Culiacán, Sinaloa, con atención a proyectos en diferentes estados del país.
+              </p>
+              <div class="mt-4 font-bold text-slate-700">
+                Culiacán, Sinaloa · México
+              </div>
+            </div>
+
+            <div class="rounded-2xl border bg-white p-5" style="border-color: var(--vabel-line);">
+              <div class="h-12 w-12 rounded-xl border flex items-center justify-center"
+                   style="border-color: var(--vabel-line);">
+                <i class="fa-solid fa-clock text-xl" style="color: var(--vabel-sky);"></i>
+              </div>
+              <div class="mt-4 text-lg font-extrabold title-accent">Atención</div>
+              <p class="mt-2 text-sm leading-7 text-slate-600">
+                Respuesta por medios digitales para revisión inicial y coordinación de servicios.
+              </p>
+              <div class="mt-4 font-bold text-slate-700">
+                Comunicación ágil y profesional
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-8 rounded-2xl p-6 text-white"
+               style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue));">
+            <div class="text-sm uppercase tracking-widest font-extrabold text-white/70">
+              Primer contacto
+            </div>
+            <div class="mt-2 text-2xl font-extrabold">
+              Cuéntanos qué necesitas
+            </div>
+            <p class="mt-3 text-white/85 leading-7">
+              Puedes compartirnos el tipo de proyecto, ubicación, nivel de avance y el servicio que requieres.
+            </p>
+
+            <div class="mt-5 flex flex-col sm:flex-row gap-3">
+              <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+                 class="px-5 py-3 rounded-xl font-extrabold text-white inline-flex items-center justify-center"
+                 style="background: rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);">
+                WhatsApp <i class="fa-solid fa-arrow-right ml-2"></i>
+              </a>
+
+              <a href="mailto:vabelproyectos@gmail.com"
+                 class="px-5 py-3 rounded-xl font-extrabold text-white inline-flex items-center justify-center"
+                 style="background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.16);">
+                Enviar correo <i class="fa-solid fa-arrow-right ml-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha -->
+        <div class="flex flex-col gap-8">
+
+          <div class="card overflow-hidden">
+            <div class="p-8">
+              <div class="text-xs tracking-widest uppercase font-extrabold" style="color: var(--vabel-muted);">
+                Cobertura
+              </div>
+              <h4 class="mt-2 text-2xl font-extrabold title-accent">
+                Proyectos locales y foráneos
+              </h4>
+              <p class="mt-4 text-slate-700 leading-8">
+                Trabajamos desde Culiacán, Sinaloa, brindando atención profesional a proyectos en todo México.
+              </p>
+
+              <div class="mt-6 space-y-3 text-slate-700">
+                <div class="flex items-start gap-3">
+                  <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                  <span>Diseño estructural para proyectos nuevos</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                  <span>Revisión y consultoría para proyectos en desarrollo</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                  <span>Evaluación técnica de estructuras existentes</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <i class="fa-solid fa-check mt-1" style="color: var(--vabel-sky);"></i>
+                  <span>Atención por medios digitales y coordinación directa</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card overflow-hidden">
+            <iframe
+              src="https://www.google.com/maps?q=Culiac%C3%A1n%20Sinaloa%20M%C3%A9xico&z=12&output=embed"
+              class="w-full h-[340px] border-0"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen>
+            </iframe>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+    </section>
+    </main>
+
+  <!-- FOOTER GLOBAL -->
+  <footer
+    style="
+      color: rgba(255,255,255,.86);
+      background:
+        linear-gradient(rgba(10,30,52,.94), rgba(10,30,52,.94)),
+        linear-gradient(30deg, rgba(255,255,255,.035) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.035) 87.5%, rgba(255,255,255,.035)),
+        linear-gradient(150deg, rgba(255,255,255,.035) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.035) 87.5%, rgba(255,255,255,.035)),
+        linear-gradient(30deg, rgba(255,255,255,.035) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.035) 87.5%, rgba(255,255,255,.035)),
+        linear-gradient(150deg, rgba(255,255,255,.035) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,.035) 87.5%, rgba(255,255,255,.035)),
+        linear-gradient(60deg, rgba(255,255,255,.02) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,.02) 75%, rgba(255,255,255,.02)),
+        linear-gradient(60deg, rgba(255,255,255,.02) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,.02) 75%, rgba(255,255,255,.02));
+      background-position: 0 0, 0 0, 0 0, 24px 42px, 24px 42px, 0 0, 24px 42px;
+      background-size: 48px 84px;
+    ">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <!-- Marca -->
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-3">
+            <img src="Estructura-1.png" class="h-12 w-auto object-contain" alt="VABEL">
+            <div class="leading-tight">
+              <div class="font-extrabold text-white text-xl">VABEL</div>
+              <div class="text-sm text-white/70">Ingeniería Estructural</div>
+            </div>
+          </div>
+
+          <p class="mt-6 text-[15px] leading-8 text-white/78 max-w-sm">
+            Soluciones estructurales con criterio técnico, claridad y enfoque profesional para proyectos en todo México.
+          </p>
+
+          <div class="mt-6 flex gap-3">
+            <a class="h-11 w-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+               href="https://wa.me/526673214538" target="_blank" rel="noopener" aria-label="WhatsApp">
+              <i class="fa-brands fa-whatsapp"></i>
+            </a>
+            <a class="h-11 w-11 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition"
+               href="mailto:vabelproyectos@gmail.com" aria-label="Correo">
+              <i class="fa-regular fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Accesos -->
+        <div>
+          <div class="font-extrabold text-white text-2xl">Accesos Rápidos</div>
+          <ul class="mt-6 space-y-3 text-[15px] text-white/82">
+            <li><a class="hover:text-white transition" href="#inicio" onclick="go('inicio'); return false;">Inicio</a></li>
+            <li><a class="hover:text-white transition" href="#nosotros" onclick="go('nosotros'); return false;">Nosotros</a></li>
+            <li><a class="hover:text-white transition" href="#servicios" onclick="go('servicios'); return false;">Servicios</a></li>
+            <li><a class="hover:text-white transition" href="#proyectos" onclick="go('proyectos'); return false;">Proyectos</a></li>
+            <li><a class="hover:text-white transition" href="#contacto" onclick="go('contacto'); return false;">Contacto</a></li>
+          </ul>
+        </div>
+
+        <!-- Servicios -->
+        <div>
+          <div class="font-extrabold text-white text-2xl">Servicios</div>
+          <ul class="mt-6 space-y-3 text-[15px] text-white/82">
+            <li>Diseño estructural</li>
+            <li>Consultoría técnica</li>
+            <li>Revisión estructural</li>
+            <li>Dictámenes y evaluación</li>
+            <li>Proyectos residenciales, comerciales e industriales</li>
+          </ul>
+        </div>
+
+        <!-- Contacto -->
+        <div>
+          <div class="font-extrabold text-white text-2xl">Contacto</div>
+          <ul class="mt-6 space-y-4 text-[15px] text-white/82">
+            <li class="flex items-start gap-3">
+              <i class="fa-solid fa-location-dot mt-1 text-cyan-300"></i>
+              <span>Culiacán, Sinaloa · México</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <i class="fa-solid fa-phone mt-1 text-cyan-300"></i>
+              <a class="hover:text-white transition" href="tel:+526673214538">+52 667 321 4538</a>
+            </li>
+            <li class="flex items-start gap-3">
+              <i class="fa-regular fa-envelope mt-1 text-cyan-300"></i>
+              <a class="hover:text-white transition break-all" href="mailto:vabelproyectos@gmail.com">vabelproyectos@gmail.com</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="mt-12 border-t border-white/10 pt-6 text-center text-sm text-white/74">
+        © <span id="year"></span> <span class="font-bold text-white">VABEL</span>. Todos los derechos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp -->
+  <a href="https://wa.me/526673214538" target="_blank" rel="noopener"
+     class="fixed bottom-5 right-5 z-50 h-14 w-14 rounded-full bg-white border flex items-center justify-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition"
+     style="border-color: var(--vabel-line);" aria-label="WhatsApp">
+    <i class="fa-brands fa-whatsapp text-2xl" style="color:#16a34a;"></i>
+  </a>
+
+  <script>
+  // ========= VABEL: SCRIPT ÚNICO (sin errores) =========
+
+  // Año en footer (si existe)
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  // -------- Menú móvil --------
+  const btnMenu = document.getElementById('btnMenu');
+  const mobileMenu = document.getElementById('mobileMenu');
+  if (btnMenu && mobileMenu) {
+    btnMenu.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+  }
+
+  // -------- Slider --------
+  let sliderIdx = 0;
+  const slides = [
+    document.getElementById('slide1'),
+    document.getElementById('slide2'),
+    document.getElementById('slide3')
+  ].filter(Boolean);
+
+  function showSlide(i) {
+    if (!slides.length) return;
+    slides.forEach(s => s.classList.remove('active'));
+    slides[i].classList.add('active');
+    sliderIdx = i;
+  }
+
+  window.nextSlide = function () {
+    if (!slides.length) return;
+    showSlide((sliderIdx + 1) % slides.length);
+  };
+
+  window.prevSlide = function () {
+    if (!slides.length) return;
+    showSlide((sliderIdx - 1 + slides.length) % slides.length);
+  };
+
+  if (slides.length) {
+    setInterval(window.nextSlide, 4500);
+  }
+
+    // -------- Slider Servicios --------
+  let serviceSliderIdx = 0;
+  const serviceSlides = document.querySelectorAll('.service-slide');
+  const serviceDots = document.querySelectorAll('.service-dot');
+
+  window.showServiceSlide = function (i) {
+    if (!serviceSlides.length) return;
+    serviceSlides.forEach(s => s.classList.remove('active'));
+    serviceDots.forEach(d => d.classList.remove('active'));
+
+    serviceSlides[i].classList.add('active');
+    if (serviceDots[i]) serviceDots[i].classList.add('active');
+    serviceSliderIdx = i;
+  };
+
+  function nextServiceSlide() {
+    if (!serviceSlides.length) return;
+    window.showServiceSlide((serviceSliderIdx + 1) % serviceSlides.length);
+  }
+
+  if (serviceSlides.length) {
+    setInterval(nextServiceSlide, 5000);
+  }
+
+  // -------- Navegación por "páginas" --------
+  function setActiveNav(pageId) {
+    const navLinks = document.querySelectorAll('.nav-premium a');
+    navLinks.forEach(a => a.classList.remove('active'));
+
+    navLinks.forEach(a => {
+      const on = a.getAttribute('onclick') || '';
+      if (on.includes(`go('${pageId}')`) || on.includes(`go("${pageId}")`)) {
+        a.classList.add('active');
+      }
+    });
+  }
+
+  window.go = function (pageId) {
+    const pages = document.querySelectorAll('.page');
+
+    // Si no existe el sistema de páginas, fallback a scroll por ancla
+    if (!pages.length) {
+      const anchor = document.getElementById(pageId);
+      if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    // Ocultar todas
+    pages.forEach(p => p.classList.remove('active'));
+
+    // Mostrar destino
+    const target = document.getElementById('page-' + pageId);
+    if (!target) {
+      console.warn(`[VABEL] No existe #page-${pageId}.`);
+      return;
+    }
+    target.classList.add('active');
+
+    setActiveNav(pageId);
+
+    // Cerrar menú móvil
+    if (mobileMenu) mobileMenu.classList.add('hidden');
+
+    // Ir arriba
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Arrancar siempre en "inicio"
+  window.addEventListener('DOMContentLoaded', () => {
+    window.go('inicio');
+  });
+
+  </script>
+
+</body>
+</html>
+
