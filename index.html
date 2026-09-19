@@ -1910,6 +1910,7 @@ textarea.form-campo{ resize:vertical; min-height:120px; }
                       <input id="fc-web" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
                     </div>
 
+                    <input type="hidden" name="_replyto" id="fc-replyto" />
                     <input type="hidden" name="_subject" value="Nuevo contacto desde vabel.com.mx" />
 
                     <div class="sm:col-span-2 flex flex-col sm:flex-row sm:items-center gap-4 mt-1">
@@ -2405,6 +2406,10 @@ textarea.form-campo{ resize:vertical; min-height:120px; }
         avisar('error', 'Revisa los campos marcados: faltan datos o el correo no es válido.');
         return;
       }
+
+      // que el boton Responder del correo vaya a quien escribio, no a Formspree
+      const replyto = document.getElementById('fc-replyto');
+      if (replyto) replyto.value = form.correo.value.trim();
 
       if (form.action.includes('TU_ID_DE_FORMSPREE')) {
         avisar('error', 'El formulario aún no está conectado. Escríbenos por WhatsApp mientras tanto.');
