@@ -1,0 +1,9 @@
+# Material original: exportaciones de ETABS, renders, fotos sin procesar.
+# Se queda solo en tu computadora. Al sitio suben unicamente las
+# versiones ya recortadas y optimizadas.
+material-fuente/
+
+# Basura del sistema
+Thumbs.db
+desktop.ini
+.DS_Store
