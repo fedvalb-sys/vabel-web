@@ -1,0 +1,266 @@
+:root {
+  /* Base VABEL */
+  --vabel-navy: #0b1f3b; /* principal */
+  --vabel-blue: #1e40af; /* acento sobrio (menos “neón”) */
+  --vabel-sky: #2563eb; /* acento secundario para hover/links */
+
+  /* Neutros premium */
+  --vabel-ink: #0f172a;
+  --vabel-muted: #5b6b82; /* un poco más “corporativo” */
+  --vabel-line: #e6eaf2;
+  --vabel-soft: #f7f9fd;
+}
+
+body {
+  font-family:
+    "Manrope",
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial,
+    sans-serif;
+}
+.btn-primary {
+  background: var(--vabel-navy);
+}
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+.btn-outline {
+  border: 1px solid var(--vabel-line);
+}
+.title-accent {
+  color: var(--vabel-navy);
+}
+.bar {
+  width: 86px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--vabel-navy), var(--vabel-sky));
+}
+
+/* Slider (estructura tipo IC) */
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.02);
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s ease;
+}
+.slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* Proyectos: hover overlay */
+.proj {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid var(--vabel-line);
+  background: #fff;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.proj:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+}
+.proj img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+.proj .proj-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 31, 59, 0) 30%, rgba(11, 31, 59, 0.86) 100%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.proj:hover .proj-overlay {
+  opacity: 1;
+}
+.proj .proj-text {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  color: #fff;
+}
+.proj:hover .proj-text {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Cards */
+.card {
+  border: 1px solid var(--vabel-line);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+  border-color: rgba(29, 78, 216, 0.25);
+}
+
+/* Mini “ticker” (banda tipo carrusel de frases) */
+.ticker {
+  overflow: hidden;
+  background: var(--vabel-navy);
+  color: rgba(255, 255, 255, 0.92);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.ticker-track {
+  display: flex;
+  gap: 42px;
+  padding: 18px 0;
+  white-space: nowrap;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ===== Header premium ===== */
+.nav-premium a {
+  position: relative;
+  padding: 10px 4px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.78);
+  letter-spacing: 0.2px;
+}
+.nav-premium a:hover {
+  color: rgba(15, 23, 42, 1);
+}
+.nav-premium a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+  height: 2px;
+  width: 0%;
+  background: var(--vabel-sky);
+  border-radius: 999px;
+  transition: width 0.22s ease;
+}
+.nav-premium a:hover::after {
+  width: 100%;
+}
+
+.nav-premium a.active {
+  color: var(--vabel-navy);
+}
+.nav-premium a.active::after {
+  width: 100%;
+  background: var(--vabel-blue);
+}
+
+/* CTA más sobrio */
+.header-cta {
+  background: var(--vabel-navy);
+}
+.header-cta:hover {
+  filter: brightness(0.96);
+}
+
+/* ===== Single-page "pages" with transitions ===== */
+/* Opcional: evita que el usuario “se pierda” con scroll largo */
+/* ===== Services slider ===== */
+.service-hero {
+  min-height: 340px;
+  background: #0b1f3b;
+}
+
+.service-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.02);
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s ease;
+}
+.service-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.service-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  transition: all 0.2s ease;
+}
+.service-dot.active {
+  background: white;
+  transform: scale(1.08);
+}
+    
+/* ===== Formulario de contacto ===== */
+.form-campo{
+  width:100%;
+  margin-top:.5rem;
+  padding:.75rem 1rem;
+  border-radius:.75rem;
+  background:rgba(255,255,255,.96);
+  color:var(--vabel-ink);
+  border:1px solid rgba(255,255,255,.4);
+  font-family:inherit;
+  font-size:15px;
+  line-height:1.5;
+  transition:box-shadow .18s ease, border-color .18s ease;
+}
+.form-campo::placeholder{ color:#94a3b8; }
+.form-campo:focus{
+  outline:none;
+  border-color:#fff;
+  box-shadow:0 0 0 3px rgba(255,255,255,.4);
+}
+.form-campo[aria-invalid="true"]{
+  border-color:#fca5a5;
+  box-shadow:0 0 0 3px rgba(248,113,113,.3);
+}
+select.form-campo{
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B82' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right .85rem center;
+  background-size:1.1rem;
+  padding-right:2.6rem;
+}
+textarea.form-campo{ resize:vertical; min-height:120px; }
