@@ -73,8 +73,8 @@
         "@type": "ProfessionalService",
         "name": "VABEL INGENIERIA ESTRUCTURAL",
         "url": "https://vabel.com.mx/",
-        "logo": "https://vabel.com.mx/Estructura-1.png",
-        "image": "https://vabel.com.mx/Estructura-1.png",
+        "logo": "https://vabel.com.mx/logo-vabel.png",
+        "image": "https://vabel.com.mx/og-vabel.jpg",
         "description": "Firma de ingeniería estructural especializada en diseño estructural, consultoría estructural, revisión técnica, dictámenes y acompañamiento profesional.",
         "telephone": "+52 667 321 4538",
         "email": "proyectos@vabel.com.mx",
@@ -352,7 +352,42 @@
         background: white;
         transform: scale(1.08);
       }
-    </style>
+    
+/* ===== Formulario de contacto ===== */
+.form-campo{
+  width:100%;
+  margin-top:.5rem;
+  padding:.75rem 1rem;
+  border-radius:.75rem;
+  background:rgba(255,255,255,.96);
+  color:var(--vabel-ink);
+  border:1px solid rgba(255,255,255,.4);
+  font-family:inherit;
+  font-size:15px;
+  line-height:1.5;
+  transition:box-shadow .18s ease, border-color .18s ease;
+}
+.form-campo::placeholder{ color:#94a3b8; }
+.form-campo:focus{
+  outline:none;
+  border-color:#fff;
+  box-shadow:0 0 0 3px rgba(255,255,255,.4);
+}
+.form-campo[aria-invalid="true"]{
+  border-color:#fca5a5;
+  box-shadow:0 0 0 3px rgba(248,113,113,.3);
+}
+select.form-campo{
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B6B82' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right .85rem center;
+  background-size:1.1rem;
+  padding-right:2.6rem;
+}
+textarea.form-campo{ resize:vertical; min-height:120px; }
+</style>
   </head>
 
   <body class="bg-white text-slate-900">
@@ -372,7 +407,11 @@
             "
             class="flex items-center shrink-0"
           >
-            <img src="Estructura-1.png" alt="VABEL" class="h-32 sm:h-44 w-auto object-contain" />
+            <img
+              src="logo-vabel.png"
+              alt="VABEL Ingeniería Estructural"
+              class="h-14 sm:h-20 w-auto object-contain"
+            />
           </a>
 
           <!-- Menú desktop -->
@@ -1773,7 +1812,7 @@
                 </div>
 
                 <div
-                  class="mt-8 rounded-2xl p-6 text-white"
+                  class="mt-8 rounded-2xl p-6 sm:p-8 text-white"
                   style="background: linear-gradient(135deg, var(--vabel-navy), var(--vabel-blue))"
                 >
                   <div class="text-sm uppercase tracking-widest font-extrabold text-white/70">
@@ -1781,35 +1820,127 @@
                   </div>
                   <div class="mt-2 text-2xl font-extrabold">Cuéntanos qué necesitas</div>
                   <p class="mt-3 text-white/85 leading-7">
-                    Puedes compartirnos el tipo de proyecto, ubicación, nivel de avance y el
-                    servicio que requieres.
+                    Comparte los datos de tu proyecto y te respondemos con el alcance, los entregables y
+                    la mejor forma de apoyarte.
                   </p>
 
-                  <div class="mt-5 flex flex-col sm:flex-row gap-3">
-                    <a
-                      href="https://wa.me/526673214538"
-                      target="_blank"
-                      rel="noopener"
-                      class="px-5 py-3 rounded-xl font-extrabold text-white inline-flex items-center justify-center"
-                      style="
-                        background: rgba(255, 255, 255, 0.14);
-                        border: 1px solid rgba(255, 255, 255, 0.22);
-                      "
-                    >
-                      WhatsApp <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
+                  <form
+                    id="formContacto"
+                    class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    action="https://formspree.io/f/TU_ID_DE_FORMSPREE"
+                    method="POST"
+                    novalidate
+                  >
+                    <div class="sm:col-span-1">
+                      <label for="fc-nombre" class="block text-sm font-bold text-white/85">
+                        Nombre <span aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="fc-nombre"
+                        name="nombre"
+                        type="text"
+                        required
+                        autocomplete="name"
+                        class="form-campo"
+                        placeholder="Tu nombre"
+                      />
+                    </div>
 
-                    <a
-                      href="mailto:proyectos@vabel.com.mx"
-                      class="px-5 py-3 rounded-xl font-extrabold text-white inline-flex items-center justify-center"
-                      style="
-                        background: rgba(255, 255, 255, 0.1);
-                        border: 1px solid rgba(255, 255, 255, 0.16);
-                      "
-                    >
-                      Enviar correo <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
-                  </div>
+                    <div class="sm:col-span-1">
+                      <label for="fc-correo" class="block text-sm font-bold text-white/85">
+                        Correo <span aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="fc-correo"
+                        name="correo"
+                        type="email"
+                        required
+                        autocomplete="email"
+                        class="form-campo"
+                        placeholder="tucorreo@ejemplo.com"
+                      />
+                    </div>
+
+                    <div class="sm:col-span-1">
+                      <label for="fc-telefono" class="block text-sm font-bold text-white/85">
+                        Teléfono <span class="font-normal text-white/60">(opcional)</span>
+                      </label>
+                      <input
+                        id="fc-telefono"
+                        name="telefono"
+                        type="tel"
+                        autocomplete="tel"
+                        class="form-campo"
+                        placeholder="667 123 4567"
+                      />
+                    </div>
+
+                    <div class="sm:col-span-1">
+                      <label for="fc-servicio" class="block text-sm font-bold text-white/85">
+                        Servicio de interés
+                      </label>
+                      <select id="fc-servicio" name="servicio" class="form-campo">
+                        <option value="Diseño estructural">Diseño estructural</option>
+                        <option value="Consultoría y revisión">Consultoría y revisión</option>
+                        <option value="Peritaje o dictamen">Peritaje o dictamen</option>
+                        <option value="Director Responsable de Obra">Director Responsable de Obra</option>
+                        <option value="Valuación de inmuebles">Valuación de inmuebles</option>
+                        <option value="Diagnóstico estructural">Diagnóstico estructural</option>
+                        <option value="Otro">Otro / no estoy seguro</option>
+                      </select>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                      <label for="fc-mensaje" class="block text-sm font-bold text-white/85">
+                        Cuéntanos del proyecto <span aria-hidden="true">*</span>
+                      </label>
+                      <textarea
+                        id="fc-mensaje"
+                        name="mensaje"
+                        rows="4"
+                        required
+                        class="form-campo"
+                        placeholder="Tipo de obra, ubicación, nivel de avance y qué necesitas."
+                      ></textarea>
+                    </div>
+
+                    <!-- Trampa antispam: invisible para personas, tentadora para robots -->
+                    <div class="hidden" aria-hidden="true">
+                      <label for="fc-web">No llenar este campo</label>
+                      <input id="fc-web" name="_gotcha" type="text" tabindex="-1" autocomplete="off" />
+                    </div>
+
+                    <input type="hidden" name="_subject" value="Nuevo contacto desde vabel.com.mx" />
+
+                    <div class="sm:col-span-2 flex flex-col sm:flex-row sm:items-center gap-4 mt-1">
+                      <button
+                        type="submit"
+                        id="fcEnviar"
+                        class="px-6 py-3 rounded-xl font-extrabold inline-flex items-center justify-center bg-white text-[color:var(--vabel-navy)] hover:bg-slate-100 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        <span id="fcEnviarTexto">Enviar mensaje</span>
+                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                      </button>
+
+                      <p class="text-sm text-white/70 leading-6">
+                        O escríbenos directo por
+                        <a
+                          href="https://wa.me/526673214538"
+                          target="_blank"
+                          rel="noopener"
+                          class="font-bold underline underline-offset-2 hover:text-white"
+                          >WhatsApp</a
+                        >.
+                      </p>
+                    </div>
+
+                    <p
+                      id="fcEstado"
+                      class="sm:col-span-2 text-sm leading-6 hidden rounded-xl px-4 py-3"
+                      role="status"
+                      aria-live="polite"
+                    ></p>
+                  </form>
                 </div>
               </div>
 
@@ -1940,16 +2071,12 @@
           <div class="lg:col-span-1">
             <div class="flex items-center gap-3">
               <img
-                src="Estructura-1.png"
-                class="h-12 w-auto object-contain"
+                src="logo-vabel-claro.png"
+                class="h-14 w-auto object-contain"
                 alt="VABEL Ingeniería Estructural"
                 loading="lazy"
                 decoding="async"
               />
-              <div class="leading-tight">
-                <div class="font-extrabold text-white text-xl">VABEL</div>
-                <div class="text-sm text-white/70">Ingeniería Estructural</div>
-              </div>
             </div>
 
             <p class="mt-6 text-[15px] leading-8 text-white/[0.78] max-w-sm">
@@ -2243,6 +2370,71 @@
         const existe = destino && document.getElementById("page-" + destino);
         window.go(existe ? destino : "inicio");
       });
-    </script>
+    
+  // -------- Formulario de contacto --------
+  (function () {
+    const form = document.getElementById('formContacto');
+    if (!form) return;
+
+    const estado = document.getElementById('fcEstado');
+    const boton = document.getElementById('fcEnviar');
+    const botonTexto = document.getElementById('fcEnviarTexto');
+    const ES_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    function avisar(tipo, texto) {
+      estado.textContent = texto;
+      estado.classList.remove('hidden');
+      const ok = tipo === 'ok';
+      estado.style.background = ok ? 'rgba(34,197,94,.18)' : 'rgba(248,113,113,.18)';
+      estado.style.border = '1px solid ' + (ok ? 'rgba(134,239,172,.55)' : 'rgba(252,165,165,.55)');
+      estado.style.color = '#fff';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const obligatorios = [...form.querySelectorAll('[required]')];
+      obligatorios.forEach((c) => c.removeAttribute('aria-invalid'));
+      const faltantes = obligatorios.filter(
+        (c) => !c.value.trim() || (c.type === 'email' && !ES_CORREO.test(c.value.trim()))
+      );
+
+      if (faltantes.length) {
+        faltantes.forEach((c) => c.setAttribute('aria-invalid', 'true'));
+        faltantes[0].focus();
+        avisar('error', 'Revisa los campos marcados: faltan datos o el correo no es válido.');
+        return;
+      }
+
+      if (form.action.includes('TU_ID_DE_FORMSPREE')) {
+        avisar('error', 'El formulario aún no está conectado. Escríbenos por WhatsApp mientras tanto.');
+        console.warn('[VABEL] Falta poner el endpoint real de Formspree en el atributo action del formulario.');
+        return;
+      }
+
+      boton.disabled = true;
+      botonTexto.textContent = 'Enviando...';
+
+      try {
+        const r = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (r.ok) {
+          form.reset();
+          avisar('ok', 'Gracias. Recibimos tu mensaje y te respondemos a la brevedad.');
+        } else {
+          avisar('error', 'No pudimos enviar el mensaje. Inténtalo de nuevo o escríbenos por WhatsApp.');
+        }
+      } catch (err) {
+        avisar('error', 'No pudimos enviar el mensaje. Revisa tu conexión o escríbenos por WhatsApp.');
+      } finally {
+        boton.disabled = false;
+        botonTexto.textContent = 'Enviar mensaje';
+      }
+    });
+  })();
+</script>
   </body>
 </html>
